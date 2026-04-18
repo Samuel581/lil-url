@@ -28,6 +28,10 @@ export class UserService {
     return this.prisma.user.update({ where: { id }, data });
   }
 
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
   remove(id: string) {
     return this.prisma.user.delete({ where: { id } });
   }
