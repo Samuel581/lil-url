@@ -12,7 +12,8 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  async logout(@Request() req) {
-    // Implement logout logic, e.g., invalidate session or token
+  @Post('logout')
+  async logout() {
+    return { message: 'Logged out successfully' };
   }
 }
