@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-const SALT_ROUNDS = 10;
-
 @Injectable()
 export class HashService {
+  private readonly saltRounds = parseInt(
+    process.env.BCRYPT_SALT_ROUNDS ?? '10',
+    10,
+  );
+
   hash(plain: string): Promise<string> {
-    return bcrypt.hash(plain, SALT_ROUNDS);
+    return bcrypt.hash(plain, this.saltRounds);
   }
 
   compare(plain: string, hashed: string): Promise<boolean> {
