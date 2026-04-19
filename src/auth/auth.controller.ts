@@ -8,7 +8,11 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  login(@Request() req) {
-    return req.user;
+  async login(@Request() req) {
+    return this.authService.login(req.user);
+  }
+
+  async logout(@Request() req) {
+    // Implement logout logic, e.g., invalidate session or token
   }
 }
