@@ -1,10 +1,10 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
-export class CreateAuthDto {
+export class LoginDto {
   @IsEmail()
   email: string;
 
   @IsString()
   @MinLength(8)
-  passwordHash: string;
+  password: string;
 }
