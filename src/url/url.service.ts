@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ShortLink } from './interfaces/url.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -16,13 +16,18 @@ export class UrlService {
     originalUrl: string,
     customAlias?: string,
   ): Promise<ShortLink> {
-    const shortCode = customAlias || this.generateNanoId();
+    const shortCode = customAlias ?? this.generateNanoId();
+
     const codeAlreadyExists = await this.prisma.link.findUnique({
       where: { shortCode },
     });
 
     if (codeAlreadyExists) {
-      throw new Error('Custom alias already in use');
+      throw new ConflictException(
+        customAlias
+          ? 'Custom alias already in use'
+          : 'Generated short code already exists, please try again',
+      );
     }
 
     const shortLink = await this.prisma.link.create({
@@ -30,7 +35,7 @@ export class UrlService {
     });
 
     return {
-      shortCode: shortLink.shortCode || ' ',
+      shortCode: shortLink.shortCode,
       originalUrl: shortLink.originalUrl,
     };
   }
