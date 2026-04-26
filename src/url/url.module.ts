@@ -1,0 +1,17 @@
+import { Module } from '@nestjs/common';
+import { UrlController } from './url.controller';
+import { UrlService } from './url.service';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from 'src/auth/constants';
+
+@Module({
+  controllers: [UrlController],
+  providers: [UrlService],
+  imports: [
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '1d' },
+    }),
+  ],
+})
+export class UrlModule {}
