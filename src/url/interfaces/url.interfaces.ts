@@ -1,5 +1,6 @@
 export interface ShortLink {
-  originalUrl: string;
+  shortUrl: string;
   shortCode: string;
+  originalUrl: string;
   expiresAt?: Date;
 }

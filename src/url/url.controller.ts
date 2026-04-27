@@ -19,6 +19,7 @@ export class UrlController {
       req.user.id,
       body.originalUrl,
       body.customAlias,
+      body.expiresAt,
     );
   }
 }
