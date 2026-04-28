@@ -31,4 +31,10 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     return { access_token: this.jwtService.sign(payload) };
   }
+
+  async register(email: string, password: string): Promise<Auth> {
+    const user = await this.usersService.create({ email, password });
+    const { passwordHash, ...result } = user;
+    return this.login(result);
+  }
 }

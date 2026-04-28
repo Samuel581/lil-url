@@ -6,7 +6,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -22,10 +21,9 @@ model User {
 
 model Link {
   id          String    @id @default(uuid())
-  shortCode   String?   @unique @map("short_code")
+  shortCode   String    @unique @map("short_code")
   originalUrl String    @map("original_url")
   userId      String    @map("user_id")
-  customAlias String?   @unique @map("custom_alias")
   expiresAt   DateTime? @map("expires_at")
   clickCount  Int       @default(0) @map("click_count")
   isActive    Boolean   @default(true) @map("is_active")
