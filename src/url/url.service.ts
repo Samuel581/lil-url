@@ -7,6 +7,7 @@ import { ShortLink } from './interfaces/url.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { nanoid } from 'nanoid';
+import { Link } from 'generated/prisma/client';
 
 @Injectable()
 export class UrlService {
@@ -49,6 +50,13 @@ export class UrlService {
       originalUrl: shortLink.originalUrl,
       expiresAt: shortLink.expiresAt ?? undefined,
     };
+  }
+
+  async findLongUrl(shortCode: string): Promise<Link | null> {
+    const longUrl = await this.prisma.link.findUnique({
+      where: { shortCode },
+    });
+    return longUrl;
   }
 
   private parseAndValidateExpiry(raw: string): Date {
