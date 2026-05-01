@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { nanoid } from 'nanoid';
 import { Link } from 'generated/prisma/client';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class UrlService {
@@ -59,6 +60,15 @@ export class UrlService {
     });
     this.validateLinkStatus(longUrl?.isActive);
     return longUrl;
+  }
+
+  @Cron('0 0 * * *')
+  async checkLinksStatus(): Promise<void> {
+    const todayDate = new Date();
+    await this.prisma.link.updateMany({
+      where: { expiresAt: { lte: todayDate }, isActive: true },
+      data: { isActive: false },
+    });
   }
 
   private validateLinkStatus(status: boolean | undefined) {
