@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { ShortLink } from './interfaces/url.interfaces';
 import { JwtService } from '@nestjs/jwt';
@@ -56,7 +57,12 @@ export class UrlService {
     const longUrl = await this.prisma.link.findUnique({
       where: { shortCode },
     });
+    this.validateLinkStatus(longUrl?.isActive);
     return longUrl;
+  }
+
+  private validateLinkStatus(status: boolean | undefined) {
+    if (status === false) throw new NotFoundException(' Link is not valid ');
   }
 
   private parseAndValidateExpiry(raw: string): Date {
