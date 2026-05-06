@@ -35,7 +35,10 @@ export class UrlController {
   }
 
   @Get(':id')
-  async redirectUrl(@Param() id: string, @Res() res: Response): Promise<void> {
+  async redirectUrl(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
     const link = await this.urlService.findLongUrl(id);
     if (link) {
       return res.status(HttpStatus.FOUND).redirect(link.originalUrl);
