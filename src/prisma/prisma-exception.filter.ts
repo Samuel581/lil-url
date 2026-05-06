@@ -51,7 +51,9 @@ export class PrismaExceptionFilter implements ExceptionFilter {
   ): { statusCode: number; message: string; error: string } {
     if (exception instanceof PrismaClientKnownRequestError) {
       return {
-        statusCode: PRISMA_CODE_STATUS[exception.code] ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        statusCode:
+          PRISMA_CODE_STATUS[exception.code] ??
+          HttpStatus.INTERNAL_SERVER_ERROR,
         message: exception.message,
         error: exception.code,
       };
