@@ -9,7 +9,7 @@
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?style=flat-square&logo=pnpm&logoColor=white)
 
-> Live at: [your-deployment-url-here]
+> Live at: [https://lil-url-production.up.railway.app/]
 
 ---
 
@@ -50,6 +50,12 @@
 | Runtime        | Node.js           | v22     |
 | Package Mgr    | pnpm              | —       |
 | Containers     | Docker / Compose  | —       |
+
+---
+
+## Database Schema
+
+<img width="640" height="446" alt="postgres - lil_url - public - links" src="https://github.com/user-attachments/assets/6aba34f8-8795-41fa-b466-714a0c876d8c" />
 
 ---
 
