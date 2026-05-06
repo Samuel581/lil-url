@@ -37,15 +37,23 @@ export class UrlController {
   @Get(':id')
   async redirectUrl(
     @Param('id') id: string,
-    @Res() res: Response,
+    @Res() response: Response,
   ): Promise<void> {
     const link = await this.urlService.findLongUrl(id);
     if (link) {
-      return res.status(HttpStatus.FOUND).redirect(link.originalUrl);
+      return response.status(HttpStatus.FOUND).redirect(link.originalUrl);
     } else {
-      res.status(HttpStatus.NOT_FOUND).json({
+      response.status(HttpStatus.NOT_FOUND).json({
         message: 'Link not valid',
       });
     }
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getShortenedLinksByUser(
+    @Request() request: { user: AuthenticatedUser },
+  ): Promise<ShortLink[]> {
+    return await this.urlService.getUserShortenedLinks(request.user.id);
   }
 }
