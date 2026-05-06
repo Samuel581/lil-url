@@ -1,98 +1,170 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# lil-url
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> A URL shortener REST API built with NestJS, PostgreSQL, and JWT authentication.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![NestJS](https://img.shields.io/badge/NestJS-v11-E0234E?style=flat-square&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-v5.7-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-v7.7-2D3748?style=flat-square&logo=prisma&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?style=flat-square&logo=pnpm&logoColor=white)
 
-## Description
+> Live at: [your-deployment-url-here]
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+
+---
+
+## Features
+
+- **JWT Authentication** — register and login with email/password; tokens expire after 24 hours
+- **URL Shortening** — auto-generates an 8-character code using nanoid
+- **Custom Aliases** — optionally supply your own short code (4–32 alphanumeric chars, hyphens, underscores)
+- **Link Expiration** — set an optional expiry date (ISO 8601, max 1 year from now)
+- **Automatic Deactivation** — a daily cron job soft-deletes expired links at midnight
+- **Click Count Tracking** — every redirect increments the link's click counter
+- **Structured Error Handling** — a global `ValidationPipe` strips unknown fields and returns `400` on malformed input; a `PrismaExceptionFilter` maps database-level errors to meaningful HTTP status codes
+- **Fully Containerized** — Docker Compose spins up the app and PostgreSQL with one command
+
+---
+
+## Tech Stack
+
+| Layer          | Technology        | Version |
+|----------------|-------------------|---------|
+| Framework      | NestJS            | v11     |
+| Language       | TypeScript        | v5.7    |
+| Database       | PostgreSQL        | 17      |
+| ORM            | Prisma            | v7.7    |
+| Authentication | Passport.js + JWT | —       |
+| Password Hash  | bcrypt            | v6      |
+| Short Codes    | nanoid            | v5.1    |
+| Runtime        | Node.js           | v22     |
+| Package Mgr    | pnpm              | —       |
+| Containers     | Docker / Compose  | —       |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** v22+
+- **pnpm** — `npm install -g pnpm`
+- **Docker + Docker Compose** (recommended) _or_ a local PostgreSQL 17 instance
+
+### Environment Variables
+
+Copy the example file and fill in the values:
 
 ```bash
-$ pnpm install
+cp .env.example .env
 ```
 
-## Compile and run the project
+| Variable              | Required | Description                                           |
+|-----------------------|----------|-------------------------------------------------------|
+| `DATABASE_URL`        | Yes      | PostgreSQL connection string (used for local dev)     |
+| `JWT_SECRET`          | Yes      | Secret key used to sign JWT tokens                    |
+| `BCRYPT_SALT_ROUNDS`  | No       | bcrypt rounds (defaults to `10`)                      |
+| `POSTGRES_USER`       | Docker   | PostgreSQL username (used by Docker Compose)          |
+| `POSTGRES_PASSWORD`   | Docker   | PostgreSQL password (used by Docker Compose)          |
+| `POSTGRES_DB`         | Docker   | PostgreSQL database name (used by Docker Compose)     |
+
+> **Note:** When running the app locally against the Dockerized database, `DATABASE_URL` must use the same credentials you set in `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`:
+> ```
+> DATABASE_URL="postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@localhost:5432/<POSTGRES_DB>?schema=public"
+> ```
+> Docker Compose builds this URL automatically for the app container (using `db` as the host), but for local dev you need to set it manually.
+
+### Option A — Docker Compose (recommended)
+
+Fill in the `POSTGRES_*` and `JWT_SECRET` variables in `.env`, then:
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+docker-compose up
 ```
 
-## Run tests
+This starts PostgreSQL on port `5432` and the API on port `3000`. Migrations run automatically on startup.
+
+### Option B — Local Setup
+
+1. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Configure `.env`** with a valid `DATABASE_URL` pointing to your local PostgreSQL instance.
+
+3. **Run migrations**
+
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+4. **Start the development server**
+
+   ```bash
+   pnpm run start:dev
+   ```
+
+The API will be available at `http://localhost:3000`.
+
+### Running Tests
 
 ```bash
-# unit tests
-$ pnpm run test
+# Unit tests
+pnpm run test
 
-# e2e tests
-$ pnpm run test:e2e
+# Unit tests in watch mode
+pnpm run test:watch
 
-# test coverage
-$ pnpm run test:cov
+# Coverage report
+pnpm run test:cov
+
+# End-to-end tests
+pnpm run test:e2e
 ```
+
+---
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+The project ships a multi-stage `Dockerfile` that produces a lean production image.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Build & Run
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+docker build -t lil-url .
+
+docker run -p 3000:3000 \
+  -e DATABASE_URL="postgresql://user:pass@db:5432/lil_url" \
+  -e JWT_SECRET="a-strong-random-secret" \
+  lil-url
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The container automatically runs `prisma migrate deploy` before starting the server, so no manual migration step is needed.
 
-## Resources
+### Environment Variables (Production)
 
-Check out a few resources that may come in handy when working with NestJS:
+| Variable       | Notes                                            |
+|----------------|--------------------------------------------------|
+| `DATABASE_URL` | Full PostgreSQL connection string                |
+| `JWT_SECRET`   | Use a long, random string (min 32 chars advised) |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Roadmap
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [ ] **Click analytics endpoint** — expose per-link click data via `GET /url/:shortCode/stats` (the `clickCount` field is already tracked in the database)
+- [ ] **Rate limiting** — throttle `POST /url/shorten` to prevent abuse
+- [ ] **Link management** — `GET /url` and `DELETE /url/:shortCode` so authenticated users can manage their own links
+- [ ] **Refresh tokens** — issue short-lived access tokens alongside longer-lived refresh tokens
