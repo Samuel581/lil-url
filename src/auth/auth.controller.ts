@@ -1,8 +1,16 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Auth } from './entities/auth.entity';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,8 +26,14 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() body: CreateUserDto): Promise<Auth> {
-    return this.authService.register(body.email, body.password);
+  async register(
+    @Body() body: CreateUserDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    await this.authService.register(body.email, body.password);
+    response
+      .status(HttpStatus.CREATED)
+      .json({ message: 'User registered successfully' });
   }
 
   @Post('logout')
