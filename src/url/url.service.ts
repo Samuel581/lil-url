@@ -18,6 +18,8 @@ export class UrlService {
     private prisma: PrismaService,
   ) {}
 
+  // Core functionality
+
   async shortenUrl(
     userId: string,
     originalUrl: string,
@@ -62,6 +64,20 @@ export class UrlService {
     return longUrl;
   }
 
+  async getUserShortenedLinks(userId: string): Promise<ShortLink[]> {
+    const links = await this.prisma.link.findMany({
+      where: { userId },
+    });
+    return links.map((link) => ({
+      shortUrl: `${process.env.BASE_URL ?? 'http://localhost:3000'}/${link.shortCode}`,
+      shortCode: link.shortCode,
+      originalUrl: link.originalUrl,
+      expiresAt: link.expiresAt ?? undefined,
+    }));
+  }
+
+  // Cron Jobs
+
   @Cron('0 0 * * *')
   async checkLinksStatus(): Promise<void> {
     const todayDate = new Date();
@@ -70,6 +86,8 @@ export class UrlService {
       data: { isActive: false },
     });
   }
+
+  // Helper methods
 
   private validateLinkStatus(status: boolean | undefined) {
     if (status === false) throw new NotFoundException(' Link is not valid ');
