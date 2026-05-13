@@ -7,7 +7,7 @@ import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api', {
-    exclude: [{ path: ':code', method: RequestMethod.GET }],
+    exclude: [{ path: 's', method: RequestMethod.ALL }],
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new PrismaExceptionFilter());
