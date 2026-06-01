@@ -3,4 +3,5 @@ export interface ShortLink {
   shortCode: string;
   originalUrl: string;
   expiresAt?: Date;
+  createdAt: Date;
 }
